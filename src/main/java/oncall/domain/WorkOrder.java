@@ -3,13 +3,23 @@ package oncall.domain;
 import java.util.List;
 
 public class WorkOrder {
-    private List<Worker> workOrder;
+    private List<Worker> weekdayWorkerOrder;
+    private List<Worker> holidayWorkerOrder;
 
-    public WorkOrder(List<Worker> workOrder) {
-        this.workOrder = workOrder;
+    public WorkOrder(List<Worker> weekdayWorkerOrder, List<Worker> holidayWorkerOrder) {
+        this.weekdayWorkerOrder = weekdayWorkerOrder;
+        this.holidayWorkerOrder = holidayWorkerOrder;
     }
 
-    public List<Worker> getWorkOrder() {
-        return workOrder;
+    public static WorkOrder of(List<Worker> weekdayWorkers, List<Worker> holidayWorkers) {
+        return new WorkOrder(weekdayWorkers, holidayWorkers);
+    }
+
+    public List<Worker> getWeekdayWorkerOrder() {
+        return weekdayWorkerOrder;
+    }
+
+    public List<Worker> getHolidayWorkerOrder() {
+        return holidayWorkerOrder;
     }
 }

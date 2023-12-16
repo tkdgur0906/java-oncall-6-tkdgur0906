@@ -2,6 +2,7 @@ package oncall.view;
 
 import camp.nextstep.edu.missionutils.Console;
 import oncall.domain.Date;
+import oncall.domain.WorkOrder;
 import oncall.domain.Worker;
 import oncall.util.Util;
 import oncall.validate.WorkerValidator;
@@ -40,33 +41,37 @@ public class InputView {
 
     }
 
-    public List<Worker> readWeekdayWorker() {
-        try{
-            System.out.println(Message.INPUT_WEEKDAY_WORKER.message);
-            List<String> workers = splitByComma(Console.readLine());
-            validateWorker(workers);
-            return workers.stream()
-                    .map(Worker::new)
-                    .toList();
+    public WorkOrder readWorkers() {
+        try {
+            List<Worker> weekdayWorkers = readWeekdayWorkers();
+            List<Worker> holidayWorkers = readHolidayWorkers();
+            return WorkOrder.of(weekdayWorkers, holidayWorkers);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            return readWeekdayWorker();
+            return readWorkers();
         }
     }
 
-    public List<Worker> readHolidayWorker() {
-        try{
-            System.out.println(Message.INPUT_HOLIDAY_WORKER.message);
-            List<String> workers = splitByComma(Console.readLine());
-            validateWorker(workers);
-            return workers.stream()
-                    .map(Worker::new)
-                    .toList();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            return readHolidayWorker();
-        }
+    private static List<Worker> readHolidayWorkers() {
+        System.out.println(Message.INPUT_HOLIDAY_WORKER.message);
+        List<String> inputHolidayWorkers = splitByComma(Console.readLine());
+        validateWorker(inputHolidayWorkers);
+        List<Worker> holidayWorkers = inputHolidayWorkers.stream()
+                .map(Worker::new)
+                .toList();
+        return holidayWorkers;
     }
+
+    private static List<Worker> readWeekdayWorkers() {
+        System.out.println(Message.INPUT_WEEKDAY_WORKER.message);
+        List<String> inputWeekdayWorkers = splitByComma(Console.readLine());
+        validateWorker(inputWeekdayWorkers);
+        List<Worker> weekdayWorkers = inputWeekdayWorkers.stream()
+                .map(Worker::new)
+                .toList();
+        return weekdayWorkers;
+    }
+
 
     private void validateWorkStartDate(List<String> date) {
         validateDateSize(date);
