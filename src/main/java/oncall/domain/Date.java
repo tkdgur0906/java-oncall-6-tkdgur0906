@@ -17,4 +17,8 @@ public class Date {
     public String getDay() {
         return day;
     }
+
+    public static Date of(int month, String day) {
+        return new Date(month, day);
+    }
 }
