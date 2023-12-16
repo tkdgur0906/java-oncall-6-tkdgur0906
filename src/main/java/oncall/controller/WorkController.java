@@ -17,7 +17,7 @@ public class WorkController {
     private final List<Worker> changedHolidayWorkers = new ArrayList<>();
     private final List<Worker> workOrder = new ArrayList<>();
     private static int weekdayWorkerIndex;
-    private static int holidayWorkerIndex =;
+    private static int holidayWorkerIndex;
     private static final List<String> DAY_ORDER = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
     public void init() {
