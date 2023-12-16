@@ -1,10 +1,15 @@
 package oncall.util;
 
+import oncall.domain.Constants;
+
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import static oncall.domain.Constants.*;
+
 public class Util {
+
     private Util() {
     }
 
@@ -22,24 +27,37 @@ public class Util {
     }
 
     public static int calculateMonthEndDay(int month) {
-        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10) {
-            return 31;
+        if (month == Month.JANUARY.month || month == Month.MARCH.month || month == Month.MAY.month
+                || month == Month.JULY.month || month == Month.AUGUST.month || month == Month.OCTOBER.month) {
+            return THIRTY_FIRST;
         }
-        if (month == 4 || month == 6 || month == 9 || month == 11) {
-            return 30;
+        if (month == Month.APRIL.month || month == Month.JUNE.month ||
+                month == Month.SEPTEMBER.month || month == Month.NOVEMBER.month) {
+            return THIRTY;
         }
-        return 28;
+        return TWENTY_EIGHT;
     }
 
     private enum Regex {
-        SPACE(" "), NO_SPACE(""),
-        SQUARE_BRACKETS_START("["), SQUARE_BRACKETS_END("]"),
+        SPACE(" "),
+        NO_SPACE(""),
         COMMA(",");
 
         private final String regex;
 
         Regex(String regex) {
             this.regex = regex;
+        }
+    }
+
+    private enum Month {
+        JANUARY(1), FEBRUARY(2), MARCH(3), APRIL(4), MAY(5), JUNE(6),
+        JULY(7), AUGUST(8), SEPTEMBER(9), OCTOBER(10), NOVEMBER(11), DECEMBER(12);
+
+        private final int month;
+
+        Month(int month) {
+            this.month = month;
         }
     }
 }
