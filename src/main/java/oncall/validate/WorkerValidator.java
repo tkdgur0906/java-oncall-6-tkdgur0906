@@ -18,6 +18,9 @@ public class WorkerValidator {
     }
 
     public static void validateWorkerEqual(List<Worker> weekdayWorkers, List<Worker> holidayWorkers) {
+        if(weekdayWorkers.size() != holidayWorkers.size()) {
+            throw new IllegalArgumentException(ErrorMessage.INVALID_INPUT.getMessage());
+        }
         List<String> weekdayWorkersName = weekdayWorkers.stream()
                 .map(Worker::getName)
                 .collect(toList());
