@@ -13,70 +13,90 @@ import static oncall.util.Util.*;
 
 public class WorkController {
 
+    private final List<Worker> changedWeekdayWorkers = new ArrayList<>();
+    private final List<Worker> changedHolidayWorkers = new ArrayList<>();
+    private final List<Worker> workOrder = new ArrayList<>();
+    private static int weekdayWorkerIndex;
+    private static int holidayWorkerIndex =;
     private static final List<String> DAY_ORDER = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
+    public void init() {
+        changedWeekdayWorkers.clear();
+        changedHolidayWorkers.clear();
+        workOrder.clear();
+        weekdayWorkerIndex = 0;
+        holidayWorkerIndex = 0;
+    }
 
     public List<Worker> calculateWorkerOrder(Date date, List<Worker> weekdayWorkers, List<Worker> holidayWorkers) {
-        int endDay = calculateMonthEndDay(date.getMonth());
-        String day = date.getDay();
-        List<Worker> changedWeekdayWorkers = new ArrayList<>();
-        List<Worker> changedHolidayWorkers = new ArrayList<>();
-        List<Worker> workOrder = new ArrayList<>();
-        int dayIndex = DAY_ORDER.indexOf(day);
-        int weekdayWorkerIndex = 0;
-        int holidayWorkerIndex = 0;
-
-        for (int dayNumber = 1; dayNumber <= endDay; dayNumber++) {
-            //오늘이 평일이면
-            if (!isMatchHoliday(date.getMonth(), dayNumber, DAY_ORDER.get(dayIndex))) {
-                if (changedWeekdayWorkers.isEmpty()) {
-                    //마지막에 추가된 근무자가 오늘 근무자와 같으면
-                    if (!workOrder.isEmpty() && workOrder.get(workOrder.size() - 1).getName().equals(weekdayWorkers.get(weekdayWorkerIndex).getName())) {
-                        changedWeekdayWorkers.add(weekdayWorkers.get(weekdayWorkerIndex));
-                        weekdayWorkerIndex++;
-                        weekdayWorkerIndex %= weekdayWorkers.size();
-                    }
-                    workOrder.add(weekdayWorkers.get(weekdayWorkerIndex));
-                    weekdayWorkerIndex++;
-                    weekdayWorkerIndex %= weekdayWorkers.size();
-                    dayIndex++;
-                    dayIndex %= 7;
-                    continue;
-                }
-                if (!changedWeekdayWorkers.isEmpty()) {
-                    workOrder.add(changedWeekdayWorkers.get(0));
-                    changedWeekdayWorkers.remove(0);
-                    dayIndex++;
-                    dayIndex %= 7;
-                }
+        init();
+        int dayIndex = getDayIndex(date);
+        for (int dayNumber = 1; dayNumber <= calculateMonthEndDay(date.getMonth()); dayNumber++) {
+            String currentDay = DAY_ORDER.get(dayIndex);
+            boolean isHoliday = isMatchHoliday(date.getMonth(), dayNumber, currentDay);
+            if (isHoliday) {
+                holidayWorkerIndex = processDay(holidayWorkers, holidayWorkerIndex, workOrder, changedHolidayWorkers, dayIndex);
             }
-            //오늘이 휴일이면
-            if (isMatchHoliday(date.getMonth(), dayNumber, DAY_ORDER.get(dayIndex))) {
-                if (changedHolidayWorkers.isEmpty()) {
-                    //마지막에 추가된 근무자가 오늘 근무자와 같으면
-                    if (!workOrder.isEmpty() && workOrder.get(workOrder.size() - 1).getName().equals(holidayWorkers.get(holidayWorkerIndex).getName())) {
-                        changedHolidayWorkers.add(holidayWorkers.get(holidayWorkerIndex));
-                        holidayWorkerIndex++;
-                        holidayWorkerIndex %= holidayWorkers.size();
-                    }
-                    workOrder.add(holidayWorkers.get(holidayWorkerIndex));
-                    holidayWorkerIndex++;
-                    holidayWorkerIndex %= holidayWorkers.size();
-                    dayIndex++;
-                    dayIndex %= 7;
-                    continue;
-                }
-                if (!changedHolidayWorkers.isEmpty()) {
-                    workOrder.add(changedHolidayWorkers.get(0));
-                    changedHolidayWorkers.remove(0);
-                    dayIndex++;
-                    dayIndex %= 7;
-                }
+            if (!isHoliday) {
+                weekdayWorkerIndex = processDay(weekdayWorkers, weekdayWorkerIndex, workOrder, changedWeekdayWorkers, dayIndex);
             }
-
+            dayIndex = increaseDayIndex(dayIndex);
         }
-
         return workOrder;
+    }
+
+    private int processDay(List<Worker> workers, int workerIndex, List<Worker> workOrder, List<Worker> changedWorkers, int dayIndex) {
+        if (changedWorkers.isEmpty()) {
+            return assignWorker(workers, workerIndex, workOrder, changedWorkers);
+        }
+        return assignDeferredWorker(changedWorkers, workOrder, dayIndex);
+    }
+
+
+    private static int getDayIndex(Date date) {
+        int dayIndex = DAY_ORDER.indexOf(date.getDay());
+        return dayIndex;
+    }
+
+
+    private static int assignWorker(List<Worker> workers, int workerIndex, List<Worker> workOrder, List<Worker> changedWorkers) {
+        workerIndex = handleSequentialWork(workers, workOrder, workerIndex, changedWorkers);
+        workOrder.add(workers.get(workerIndex));
+        workerIndex = increaseWorkerIndex(workers, workerIndex);
+        return workerIndex;
+    }
+
+    private static int assignDeferredWorker(List<Worker> changedWorkers, List<Worker> workOrder, int dayIndex) {
+        if (!changedWorkers.isEmpty()) {
+            workOrder.add(changedWorkers.get(0));
+            changedWorkers.remove(0);
+            dayIndex = increaseDayIndex(dayIndex);
+        }
+        return dayIndex;
+    }
+
+    private static int handleSequentialWork(List<Worker> workers, List<Worker> workOrder, int workerIndex, List<Worker> changedWorkers) {
+        if (isSameWorkerWithBefore(workers, workOrder, workerIndex)) {
+            changedWorkers.add(workers.get(workerIndex));
+            workerIndex = increaseWorkerIndex(workers, workerIndex);
+        }
+        return workerIndex;
+    }
+
+    private static boolean isSameWorkerWithBefore(List<Worker> workers, List<Worker> workOrder, int workerIndex) {
+        return !workOrder.isEmpty() && workOrder.get(workOrder.size() - 1).getName().equals(workers.get(workerIndex).getName());
+    }
+
+    private static int increaseWorkerIndex(List<Worker> workers, int workerIndex) {
+        workerIndex++;
+        workerIndex %= workers.size();
+        return workerIndex;
+    }
+
+    private static int increaseDayIndex(int dayIndex) {
+        dayIndex++;
+        dayIndex %= 7;
+        return dayIndex;
     }
 
     private boolean isMatchHoliday(int month, int day, String dayName) {
