@@ -32,5 +32,13 @@ public enum Holiday {
         return name;
     }
 
+    public static boolean isHoliday(int month, int day) {
+        for (Holiday holiday : Holiday.values()) {
+            if (holiday.getMonth() == month && holiday.getDay() == day) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
