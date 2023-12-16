@@ -12,9 +12,6 @@ public class Util {
         return replace(input, Regex.SPACE, Regex.NO_SPACE);
     }
 
-    public static String removeDelimiters(String input) {
-        return replace(replace(input, Regex.SQUARE_BRACKETS_START, Regex.NO_SPACE), Regex.SQUARE_BRACKETS_END, Regex.NO_SPACE);
-    }
 
     private static String replace(String input, Regex target, Regex replacement) {
         return input.replace(target.regex, replacement.regex);
@@ -24,12 +21,14 @@ public class Util {
         return Arrays.asList(removeSpace(input).split(Regex.COMMA.regex));
     }
 
-    public static List<String> formatProductInfo(String input) {
-        return splitByComma(removeDelimiters(removeSpace(input)));
-    }
-
-    private String formatPrice(int price) {
-        return NumberFormat.getInstance().format(price);
+    public static int calculateMonthEndDay(int month) {
+        if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10) {
+            return 31;
+        }
+        if (month == 4 || month == 6 || month == 9 || month == 11) {
+            return 30;
+        }
+        return 28;
     }
 
     private enum Regex {

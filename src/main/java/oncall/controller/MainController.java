@@ -25,6 +25,6 @@ public class MainController {
         WorkOrder workOrder = inputView.readWorkers();
         List<Worker> weekdayWorkers = workOrder.getWeekdayWorkerOrder();
         List<Worker> holidayWorkers = workOrder.getHolidayWorkerOrder();
-
+        outputView.printWorkOrders(workController.calculateWorkerOrder(date, weekdayWorkers, holidayWorkers), date);
     }
 }
