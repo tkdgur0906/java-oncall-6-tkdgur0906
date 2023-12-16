@@ -34,17 +34,17 @@ public class WorkController {
             String currentDay = DAY_ORDER.get(dayIndex);
             boolean isHoliday = isMatchHoliday(date.getMonth(), dayNumber, currentDay);
             if (isHoliday) {
-                holidayWorkerIndex = processDay(holidayWorkers, holidayWorkerIndex, workOrder, changedHolidayWorkers, dayIndex);
+                holidayWorkerIndex = processWork(holidayWorkers, holidayWorkerIndex, workOrder, changedHolidayWorkers, dayIndex);
             }
             if (!isHoliday) {
-                weekdayWorkerIndex = processDay(weekdayWorkers, weekdayWorkerIndex, workOrder, changedWeekdayWorkers, dayIndex);
+                weekdayWorkerIndex = processWork(weekdayWorkers, weekdayWorkerIndex, workOrder, changedWeekdayWorkers, dayIndex);
             }
             dayIndex = increaseDayIndex(dayIndex);
         }
         return workOrder;
     }
 
-    private int processDay(List<Worker> workers, int workerIndex, List<Worker> workOrder, List<Worker> changedWorkers, int dayIndex) {
+    private int processWork(List<Worker> workers, int workerIndex, List<Worker> workOrder, List<Worker> changedWorkers, int dayIndex) {
         if (changedWorkers.isEmpty()) {
             return assignWorker(workers, workerIndex, workOrder, changedWorkers);
         }
@@ -60,7 +60,12 @@ public class WorkController {
 
     private static int assignWorker(List<Worker> workers, int workerIndex, List<Worker> workOrder, List<Worker> changedWorkers) {
         workerIndex = handleSequentialWork(workers, workOrder, workerIndex, changedWorkers);
-        workOrder.add(workers.get(workerIndex));
+        if(workers.size() <= workerIndex) {
+            workerIndex %= workers.size();
+        }
+        if(workers.size() > workerIndex) {
+            workOrder.add(workers.get(workerIndex));
+        }
         workerIndex = increaseWorkerIndex(workers, workerIndex);
         return workerIndex;
     }
@@ -83,6 +88,9 @@ public class WorkController {
     }
 
     private static boolean isSameWorkerWithBefore(List<Worker> workers, List<Worker> workOrder, int workerIndex) {
+        if(workers.size() <= workerIndex) {
+            workerIndex %= workers.size();
+        }
         return !workOrder.isEmpty() && workOrder.get(workOrder.size() - 1).getName().equals(workers.get(workerIndex).getName());
     }
 
