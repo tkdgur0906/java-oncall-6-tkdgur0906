@@ -54,6 +54,20 @@ public class InputView {
         }
     }
 
+    public List<Worker> readHolidayWorker() {
+        try{
+            System.out.println(Message.INPUT_HOLIDAY_WORKER.message);
+            List<String> workers = splitByComma(Console.readLine());
+            validateWorker(workers);
+            return workers.stream()
+                    .map(Worker::new)
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return readHolidayWorker();
+        }
+    }
+
     private void validateWorkStartDate(List<String> date) {
         validateDateSize(date);
         validateMonth(date.get(0));
