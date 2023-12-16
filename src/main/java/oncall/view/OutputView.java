@@ -25,8 +25,8 @@ public class OutputView {
         System.out.println();
         int dayIndex = DAY_ORDER.indexOf(date.getDay());
         for (int day = 1; day <= calculateMonthEndDay(date.getMonth()); day++) {
-            System.out.print(date.getMonth() + Message.OUTPUT_MONTH.message +  day + Message.OUTPUT_DAY.message);
-            if(Holiday.isHoliday(date.getMonth(), day)){
+            System.out.print(date.getMonth() + Message.OUTPUT_MONTH.message + day + Message.OUTPUT_DAY.message);
+            if (Holiday.isHoliday(date.getMonth(), day)) {
                 System.out.print(Message.OUTPUT_HOLIDAY.message);
             }
             System.out.println(DAY_ORDER.get(dayIndex) + " " + workOrders.get(day - 1).getName());

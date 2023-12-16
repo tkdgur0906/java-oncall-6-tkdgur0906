@@ -4,16 +4,15 @@ import camp.nextstep.edu.missionutils.Console;
 import oncall.domain.Date;
 import oncall.domain.WorkOrder;
 import oncall.domain.Worker;
-import oncall.util.Util;
-import oncall.validate.WorkerValidator;
 
 import java.util.List;
 
 import static oncall.message.ErrorMessage.INVALID_INPUT;
-import static oncall.util.Util.*;
+import static oncall.util.Util.splitByComma;
 import static oncall.validate.Validator.validateDay;
 import static oncall.validate.Validator.validateMonth;
-import static oncall.validate.WorkerValidator.*;
+import static oncall.validate.WorkerValidator.validateWorker;
+import static oncall.validate.WorkerValidator.validateWorkerEqual;
 
 public class InputView {
 
@@ -28,7 +27,7 @@ public class InputView {
     }
 
     public Date readWorkStartDate() {
-        try{
+        try {
             System.out.print(Message.INPUT_WORK_START_DATE.message);
             String input = Console.readLine();
             List<String> date = splitByComma(input);

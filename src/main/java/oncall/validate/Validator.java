@@ -1,6 +1,5 @@
 package oncall.validate;
 
-import oncall.domain.Constants;
 import oncall.message.ErrorMessage;
 
 import static oncall.domain.Constants.*;
@@ -28,7 +27,7 @@ public class Validator {
     }
 
     public static void validateDay(String input) {
-        if(!input.equals(MONDAY) && !input.equals(TUESDAY) && !input.equals(WEDNESDAY) && !input.equals(THURSDAY)
+        if (!input.equals(MONDAY) && !input.equals(TUESDAY) && !input.equals(WEDNESDAY) && !input.equals(THURSDAY)
                 && !input.equals(FRIDAY) && !input.equals(SATURDAY) && !input.equals(SUNDAY)) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_INPUT.getMessage());
         }

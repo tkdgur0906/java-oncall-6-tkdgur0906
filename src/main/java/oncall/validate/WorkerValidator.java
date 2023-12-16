@@ -4,10 +4,8 @@ import oncall.domain.Worker;
 import oncall.message.ErrorMessage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.*;
 import static java.util.stream.Collectors.toList;
 
 public class WorkerValidator {
@@ -18,7 +16,7 @@ public class WorkerValidator {
     }
 
     public static void validateWorkerEqual(List<Worker> weekdayWorkers, List<Worker> holidayWorkers) {
-        if(weekdayWorkers.size() != holidayWorkers.size()) {
+        if (weekdayWorkers.size() != holidayWorkers.size()) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_INPUT.getMessage());
         }
         List<String> weekdayWorkersName = weekdayWorkers.stream()
