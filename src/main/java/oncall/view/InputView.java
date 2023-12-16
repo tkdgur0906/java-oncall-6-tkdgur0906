@@ -29,7 +29,7 @@ public class InputView {
 
     public Date readWorkStartDate() {
         try{
-            System.out.println(Message.INPUT_WORK_START_DATE.message);
+            System.out.print(Message.INPUT_WORK_START_DATE.message);
             String input = Console.readLine();
             List<String> date = splitByComma(input);
             validateWorkStartDate(date);
@@ -45,6 +45,7 @@ public class InputView {
         try {
             List<Worker> weekdayWorkers = readWeekdayWorkers();
             List<Worker> holidayWorkers = readHolidayWorkers();
+            validateWorkerEqual(weekdayWorkers, holidayWorkers);
             return WorkOrder.of(weekdayWorkers, holidayWorkers);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
@@ -53,7 +54,7 @@ public class InputView {
     }
 
     private static List<Worker> readHolidayWorkers() {
-        System.out.println(Message.INPUT_HOLIDAY_WORKER.message);
+        System.out.print(Message.INPUT_HOLIDAY_WORKER.message);
         List<String> inputHolidayWorkers = splitByComma(Console.readLine());
         validateWorker(inputHolidayWorkers);
         List<Worker> holidayWorkers = inputHolidayWorkers.stream()
@@ -63,7 +64,7 @@ public class InputView {
     }
 
     private static List<Worker> readWeekdayWorkers() {
-        System.out.println(Message.INPUT_WEEKDAY_WORKER.message);
+        System.out.print(Message.INPUT_WEEKDAY_WORKER.message);
         List<String> inputWeekdayWorkers = splitByComma(Console.readLine());
         validateWorker(inputWeekdayWorkers);
         List<Worker> weekdayWorkers = inputWeekdayWorkers.stream()
