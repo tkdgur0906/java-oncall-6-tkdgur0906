@@ -15,5 +15,6 @@ public class MainController {
 
     public void run() {
         inputView.readWorkStartDate();
+        inputView.readWeekdayWorker();
     }
 }

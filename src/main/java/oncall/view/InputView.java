@@ -2,7 +2,9 @@ package oncall.view;
 
 import camp.nextstep.edu.missionutils.Console;
 import oncall.domain.Date;
+import oncall.domain.Worker;
 import oncall.util.Util;
+import oncall.validate.WorkerValidator;
 
 import java.util.List;
 
@@ -10,6 +12,7 @@ import static oncall.message.ErrorMessage.INVALID_INPUT;
 import static oncall.util.Util.*;
 import static oncall.validate.Validator.validateDay;
 import static oncall.validate.Validator.validateMonth;
+import static oncall.validate.WorkerValidator.*;
 
 public class InputView {
 
@@ -37,6 +40,20 @@ public class InputView {
 
     }
 
+    public List<Worker> readWeekdayWorker() {
+        try{
+            System.out.println(Message.INPUT_WEEKDAY_WORKER.message);
+            List<String> workers = splitByComma(Console.readLine());
+            validateWorker(workers);
+            return workers.stream()
+                    .map(Worker::new)
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return readWeekdayWorker();
+        }
+    }
+
     private void validateWorkStartDate(List<String> date) {
         validateDateSize(date);
         validateMonth(date.get(0));
@@ -52,7 +69,9 @@ public class InputView {
 
 
     private enum Message {
-        INPUT_WORK_START_DATE("비상 근무를 배정할 월과 시작 요일을 입력하세요> ");
+        INPUT_WORK_START_DATE("비상 근무를 배정할 월과 시작 요일을 입력하세요> "),
+        INPUT_WEEKDAY_WORKER("평일 비상 근무 순번대로 사원 닉네임을 입력하세요> "),
+        INPUT_HOLIDAY_WORKER("휴일 비상 근무 순번대로 사원 닉네임을 입력하세요> ");
 
         private final String message;
 
